@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 -> 1.0.1
+- Version change: 1.0.1 -> 1.0.2
 - List of modified principles:
   - [PRINCIPLE_1_NAME] -> I. Responsive, Accessible, and Consistent User Interface
   - [PRINCIPLE_2_NAME] -> II. Modular and Reusable UI Architecture
@@ -40,7 +40,7 @@ The processing of mock interview audio and video recordings MUST meet strict low
 
 ## Technology Stack & Technical Standards
 - **Core Technologies**: Next.js, React, and MDX for documentation and content-heavy pages.
-- **Styling**: Vanilla CSS or Tailwind CSS for visual styling to implement layout systems.
+- **Styling**: Tailwind CSS for styling to enforce modular layout consistency and visually responsive pages.
 - **Database & Storage**: Supabase (PostgreSQL) managed via Prisma ORM for user streaks, progress tracking, and history storage.
 - **AI Integration**: Integration with OpenAI/Whisper APIs for resume parsing, STAR scoring, and mock interview text-to-speech.
 
@@ -52,4 +52,4 @@ The processing of mock interview audio and video recordings MUST meet strict low
 ## Governance
 This constitution supersedes all other documentation and guides subsequent specifications, plans, and task breakdowns. Any amendment to these principles requires documentation, a revised implementation plan, and explicit user approval.
 
-**Version**: 1.0.1 | **Ratified**: 2026-07-19 | **Last Amended**: 2026-07-19
+**Version**: 1.0.2 | **Ratified**: 2026-07-19 | **Last Amended**: 2026-07-19
