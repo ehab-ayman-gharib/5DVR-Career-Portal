@@ -1,21 +1,11 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.1 -> 1.0.2
-- List of modified principles:
-  - [PRINCIPLE_1_NAME] -> I. Responsive, Accessible, and Consistent User Interface
-  - [PRINCIPLE_2_NAME] -> II. Modular and Reusable UI Architecture
-  - [PRINCIPLE_3_NAME] -> III. Strict Typing and Robust Error Handling
-  - [PRINCIPLE_4_NAME] -> IV. Comprehensive Unit and Integration Testing
-  - [PRINCIPLE_5_NAME] -> V. Performance Optimization and Low Latency
+- Version change: 1.0.2 -> 1.0.3
+- List of modified principles: None
 - Added sections:
-  - Technology Stack & Technical Standards
-  - Development Quality Gates
+  - Authentication & Authorization technical standard (Google OAuth & Email Whitelisting)
 - Removed sections: None
-- Templates requiring updates:
-  - .specify/templates/constitution-template.md (✅ aligned)
-  - .specify/templates/plan-template.md (✅ aligned)
-  - .specify/templates/spec-template.md (✅ aligned)
-  - .specify/templates/tasks-template.md (✅ aligned)
+- Templates requiring updates: None
 - Follow-up TODOs: None
 -->
 
@@ -42,6 +32,7 @@ The processing of mock interview audio and video recordings MUST meet strict low
 - **Core Technologies**: Next.js, React, and MDX for documentation and content-heavy pages.
 - **Styling**: Tailwind CSS for styling to enforce modular layout consistency and visually responsive pages.
 - **Database & Storage**: Supabase (PostgreSQL) managed via Prisma ORM for user streaks, progress tracking, and history storage.
+- **Authentication & Authorization**: Google OAuth authentication with strict email whitelisting. Only pre-approved/whitelisted emails are permitted to create profiles and access the application's content.
 - **AI Integration**: Integration with OpenAI/Whisper APIs for resume parsing, STAR scoring, and mock interview text-to-speech.
 
 ## Development Quality Gates
@@ -52,4 +43,4 @@ The processing of mock interview audio and video recordings MUST meet strict low
 ## Governance
 This constitution supersedes all other documentation and guides subsequent specifications, plans, and task breakdowns. Any amendment to these principles requires documentation, a revised implementation plan, and explicit user approval.
 
-**Version**: 1.0.2 | **Ratified**: 2026-07-19 | **Last Amended**: 2026-07-19
+**Version**: 1.0.3 | **Ratified**: 2026-07-19 | **Last Amended**: 2026-07-20
