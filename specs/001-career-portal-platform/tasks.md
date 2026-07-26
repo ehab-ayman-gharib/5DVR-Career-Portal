@@ -18,10 +18,10 @@
 
 **Purpose**: Project initialization and base application structure
 
-- [ ] T001 Initialize Next.js 14+ App Router project with TypeScript and Tailwind CSS in project root
-- [ ] T002 Install core dependencies (`@supabase/ssr`, `@supabase/supabase-js`, `@prisma/client`, `prisma`, `openai`, `pdf-parse`, `lucide-react`, `framer-motion`) in `package.json`
-- [ ] T003 [P] Configure TypeScript strict checking and Tailwind theme colors/fonts in `tsconfig.json` and `tailwind.config.js`
-- [ ] T004 [P] Create environment configuration file `.env.local` with Supabase, LLM Provider, and 3rd-party Avatar variables per `quickstart.md`
+- [x] T001 Initialize Next.js 14+ App Router project with TypeScript and Tailwind CSS in project root
+- [x] T002 Install core dependencies (`@supabase/ssr`, `@supabase/supabase-js`, `@prisma/client`, `prisma`, `openai`, `pdf-parse`, `lucide-react`, `framer-motion`) in `package.json`
+- [x] T003 [P] Configure TypeScript strict checking and Tailwind theme colors/fonts in `tsconfig.json` and `tailwind.config.js`
+- [x] T004 [P] Create environment configuration file `.env.local` with Supabase, LLM Provider, and 3rd-party Avatar variables per `quickstart.md`
 
 ---
 
@@ -29,26 +29,25 @@
 
 **Purpose**: Core database, authentication middleware, and configurable AI client infrastructure required before user stories can begin
 
-- [ ] T005 Create Prisma schema with PostgreSQL models (`WhitelistEntry`, `UserProfile`, `DailyStreak`, `Resume`, `ATSReport`, `JDMatchReport`, `Assessment`, `CareerMatch`, `Roadmap`, `RoadmapStage`, `RoadmapItem`, `MockInterview`, `InterviewReport`) in `prisma/schema.prisma`
-- [ ] T006 [P] Create Prisma database client helper in `src/lib/prisma.ts`
-- [ ] T007 [P] Create Supabase browser and server authentication client helpers in `src/lib/supabase/client.ts` and `src/lib/supabase/server.ts`
-- [ ] T008 [P] Implement configurable OpenAI-compatible LLM client supporting Development Mode (`LLM_PROVIDER=custom_dev`, Modal Qwen3.6-27B-FP8 endpoint) and Production Mode (`LLM_PROVIDER=openai`) in `src/lib/openai.ts`
-- [ ] T009 [P] Create server-side PDF text extraction helper using `pdf-parse` in `src/lib/pdf-parser.ts`
-- [ ] T0010 Create root application layout with responsive container shell and metadata in `src/app/layout.tsx`
+- [x] T005 Create Prisma schema with PostgreSQL models (`WhitelistEntry`, `UserProfile`, `DailyStreak`, `Resume`, `ATSReport`, `JDMatchReport`, `Assessment`, `CareerMatch`, `Roadmap`, `RoadmapStage`, `RoadmapItem`, `MockInterview`, `InterviewReport`) in `prisma/schema.prisma`
+- [x] T006 [P] Create Prisma database client helper in `src/lib/prisma.ts`
+- [x] T007 [P] Create Supabase browser and server authentication client helpers in `src/lib/supabase/client.ts` and `src/lib/supabase/server.ts`
+- [x] T008 [P] Implement configurable OpenAI-compatible LLM client supporting Development Mode (`LLM_PROVIDER=custom_dev`, Modal Qwen3.6-27B-FP8 endpoint) and Production Mode (`LLM_PROVIDER=openai`) in `src/lib/openai.ts`
+- [x] T009 [P] Create server-side PDF text extraction helper using `pdf-parse` in `src/lib/pdf-parser.ts`
+- [x] T010 Create root application layout with responsive container shell and metadata in `src/app/layout.tsx`
 
 ---
 
-## Phase 3: User Story 1 — Google Auth & Email Whitelisting (Priority: P1) 🎯 MVP Core
+## Phase 3: User Story 1 — Google Auth & Open Registration (Priority: P1) 🎯 MVP Core
 
-**Goal**: Authenticate users via Google OAuth and enforce strict PostgreSQL email whitelist check.
+**Goal**: Authenticate users via Google OAuth and allow instant registration for all Google accounts.
 
-**Independent Test**: Sign in with a whitelisted Google email and verify profile access. Sign in with an unapproved email and verify redirection to `/access-denied`.
+**Independent Test**: Sign in with any Google email and verify profile access/onboarding redirection.
 
-- [ ] T011 [US1] Create Whitelist verification API handler in `src/app/api/auth/verify/route.ts` per `contracts/auth.md`
-- [ ] T012 [US1] Implement Next.js auth middleware to intercept requests, check Supabase JWT session, query `WhitelistEntry` table, and enforce whitelist redirects in `src/middleware.ts`
-- [ ] T013 [P] [US1] Create Landing page with "Sign in with Google" OAuth button in `src/app/page.tsx`
-- [ ] T014 [P] [US1] Create Login view with Google OAuth redirect trigger in `src/app/(auth)/login/page.tsx`
-- [ ] T015 [P] [US1] Create Access Denied view with explanatory error message for non-whitelisted users in `src/app/(auth)/access-denied/page.tsx`
+- [x] T011 [US1] Create Auth verification API handler in `src/app/api/auth/verify/route.ts` per `contracts/auth.md`
+- [x] T012 [US1] Implement Next.js auth middleware to intercept requests, check Supabase JWT session, and enforce route protection in `src/middleware.ts`
+- [x] T013 [P] [US1] Create Landing page with "Sign in with Google" OAuth button in `src/app/page.tsx`
+- [x] T014 [P] [US1] Create Login view with Google OAuth redirect trigger in `src/app/(auth)/login/page.tsx`
 
 ---
 
@@ -58,11 +57,11 @@
 
 **Independent Test**: Complete Student path by filling profile form and verifying profile creation. Complete Job Seeker path by uploading CV, verifying auto-populated profile fields, and confirming.
 
-- [ ] T016 [P] [US2] Implement CV auto-parsing API handler using `pdf-parse` and LLM client in `src/app/api/onboarding/parse-cv/route.ts` per `contracts/onboarding.md`
-- [ ] T017 [US2] Implement Starter Profile persistence API handler in `src/app/api/onboarding/profile/route.ts` per `contracts/onboarding.md`
-- [ ] T018 [P] [US2] Create Path Selection view ("Start My Journey" vs "Get Interview-Ready") in `src/app/(dashboard)/onboarding/page.tsx`
-- [ ] T019 [US2] Create Student Starter Profile Form view in `src/app/(dashboard)/onboarding/student/page.tsx`
-- [ ] T020 [US2] Create Job Seeker CV Drag-and-Drop Upload & Auto-Populated Profile Review view in `src/app/(dashboard)/onboarding/job-seeker/page.tsx`
+- [x] T016 [P] [US2] Implement CV auto-parsing API handler using `pdf-parse` and LLM client in `src/app/api/onboarding/parse-cv/route.ts` per `contracts/onboarding.md`
+- [x] T017 [US2] Implement Starter Profile persistence API handler in `src/app/api/onboarding/profile/route.ts` per `contracts/onboarding.md`
+- [x] T018 [P] [US2] Create Path Selection view ("Start My Journey" vs "Get Interview-Ready") per `App-Screens/1-Onboarding/OnboardingLight.png` in `src/app/(dashboard)/onboarding/page.tsx`
+- [x] T019 [US2] Create Student Starter Profile Form view per `App-Screens/1-Onboarding/PreData.png` in `src/app/(dashboard)/onboarding/student/page.tsx`
+- [x] T020 [US2] Create Job Seeker CV Drag-and-Drop Upload & Auto-Populated Profile Review view per `App-Screens/1-Onboarding/CvUpload.png` in `src/app/(dashboard)/onboarding/job-seeker/page.tsx`
 
 ---
 
@@ -72,10 +71,10 @@
 
 **Independent Test**: Log in as Job Seeker and verify ATS Score radial gauge, interview metrics, and quick actions. Log in as Student and verify roadmap progress and quiz CTA.
 
-- [ ] T021 [P] [US3] Create Daily Streak Tracker widget component in `src/components/dashboard/StreakTracker.tsx`
-- [ ] T022 [P] [US3] Create ATS Score Radial Gauge widget component in `src/components/dashboard/ATSScoreGauge.tsx`
-- [ ] T023 [P] [US3] Create Today's Tasks list widget component in `src/components/dashboard/TaskList.tsx`
-- [ ] T024 [US3] Create Main Adaptive Dashboard view (rendering Job Seeker vs Student dashboard variant based on profile) in `src/app/(dashboard)/dashboard/page.tsx`
+- [x] T021 [P] [US3] Create Daily Streak Tracker widget component per `App-Screens/2-Dashboard Home/JobSeekerDashboard.png` in `src/components/dashboard/StreakTracker.tsx`
+- [x] T022 [P] [US3] Create ATS Score Radial Gauge widget component per `App-Screens/2-Dashboard Home/JobSeekerDashboard.png` in `src/components/dashboard/ATSScoreGauge.tsx`
+- [x] T023 [P] [US3] Create Today's Tasks list widget component per `App-Screens/2-Dashboard Home/JobSeekerDashboard.png` in `src/components/dashboard/TaskList.tsx`
+- [x] T024 [US3] Create Main Adaptive Dashboard view (rendering Job Seeker vs Student dashboard variant based on profile) per `App-Screens/2-Dashboard Home/JobSeekerDashboard.png` and `StudentDashboard.png` in `src/app/(dashboard)/dashboard/page.tsx`
 
 ---
 
@@ -85,10 +84,10 @@
 
 **Independent Test**: Upload a sample PDF resume, verify the ATS report calculates a score out of 100, and displays missing keywords, formatting issues, and recruiter red flags.
 
-- [ ] T025 [P] [US4] Create ATS Analyzer API handler (`/api/cv/ats`) using LLM Structured Outputs in `src/app/api/cv/ats/route.ts` per `contracts/cv-ats.md`
-- [ ] T026 [P] [US4] Create File Upload drag-and-drop component with 5MB validation in `src/components/cv/CVUploader.tsx`
-- [ ] T027 [P] [US4] Create Actionable Fix Recommendations list component in `src/components/cv/FixRecommendations.tsx`
-- [ ] T028 [US4] Create ATS Analyzer page view in `src/app/(dashboard)/cv-center/ats/page.tsx`
+- [x] T025 [P] [US4] Create ATS Analyzer API handler (`/api/cv/ats`) using LLM Structured Outputs in `src/app/api/cv/ats/route.ts` per `contracts/cv-ats.md`
+- [x] T026 [P] [US4] Create File Upload drag-and-drop component with 5MB validation per `App-Screens/3-CV Center/CV_ATS.png` in `src/components/cv/CVUploader.tsx`
+- [x] T027 [P] [US4] Create Actionable Fix Recommendations list component per `App-Screens/3-CV Center/ATSResult.png` in `src/components/cv/FixRecommendations.tsx`
+- [x] T028 [US4] Create ATS Analyzer page view per `App-Screens/3-CV Center/ATSResult.png` in `src/app/(dashboard)/cv-center/ats/page.tsx`
 
 ---
 
@@ -100,11 +99,11 @@
 
 - [ ] T029 [P] [US9] Create Mock Interview Session creation API handler (`/api/interview/session`) returning avatar iframe config in `src/app/api/interview/session/route.ts` per `contracts/mock-interview.md`
 - [ ] T030 [P] [US9] Create Interview Evaluation API handler (`/api/interview/evaluate`) executing STAR scoring in `src/app/api/interview/evaluate/route.ts` per `contracts/mock-interview.md`
-- [ ] T031 [P] [US9] Create 3rd-Party Avatar Iframe container component in `src/components/interview/AvatarIframe.tsx`
-- [ ] T032 [P] [US9] Create STAR Method Transcript Comparison component in `src/components/interview/TranscriptComparison.tsx`
-- [ ] T033 [US9] Create Interview Mode Selector page in `src/app/(dashboard)/interview/page.tsx`
-- [ ] T034 [US9] Create Active Interview Room view with embedded avatar iframe and question prompts in `src/app/(dashboard)/interview/room/[id]/page.tsx`
-- [ ] T035 [US9] Create Interview Evaluation & Feedback Report page in `src/app/(dashboard)/interview/report/[id]/page.tsx`
+- [ ] T031 [P] [US9] Create 3rd-Party Avatar Iframe container component per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/4-Mock interview-Questions.png` in `src/components/interview/AvatarIframe.tsx`
+- [ ] T032 [P] [US9] Create STAR Method Transcript Comparison component per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/6-Mock interview-Feedback.png` in `src/components/interview/TranscriptComparison.tsx`
+- [ ] T033 [US9] Create Interview Mode Selector page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/1-mock interview.png` in `src/app/(dashboard)/interview/page.tsx`
+- [ ] T034 [US9] Create Active Interview Room view with embedded avatar iframe and question prompts per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/4-Mock interview-Questions.png` in `src/app/(dashboard)/interview/room/[id]/page.tsx`
+- [ ] T035 [US9] Create Interview Evaluation & Feedback Report page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/7-Mock interview-Report.png` in `src/app/(dashboard)/interview/report/[id]/page.tsx`
 
 ---
 
@@ -114,8 +113,8 @@
 
 **Independent Test**: Select a CV, paste job description text, click "Analyze Match", and verify match score %, strengths, gaps, keyword comparison, and salary alignment render.
 
-- [ ] T036 [P] [US5] Create Job Description Matcher API handler (`/api/cv/match`) using LLM Structured Outputs in `src/app/api/cv/match/route.ts` per `contracts/cv-ats.md`
-- [ ] T037 [US5] Create Job Description Matcher page view with dual text/CV input and JD Match Report output in `src/app/(dashboard)/cv-center/jd-matcher/page.tsx`
+- [x] T036 [P] [US5] Create Job Description Matcher API handler (`/api/cv/match`) using LLM Structured Outputs in `src/app/api/cv/match/route.ts` per `contracts/cv-ats.md`
+- [x] T037 [US5] Create Job Description Matcher page view with dual text/CV input and JD Match Report output per `App-Screens/3-CV Center/CV_JobDescription.png` and `CV_JobDescription_Result.png` in `src/app/(dashboard)/cv-center/jd-matcher/page.tsx`
 
 ---
 
@@ -125,10 +124,10 @@
 
 **Independent Test**: Complete a 7-question assessment, verify progress bar updates, use save-and-exit, return to complete, and confirm archetype profile output.
 
-- [ ] T038 [P] [US6] Create Assessment submission and archetype scoring API handler in `src/app/api/discovery/assessment/route.ts`
-- [ ] T039 [P] [US6] Create Assessment Question Engine component (with A-E option buttons and progress bar) in `src/components/discovery/QuizEngine.tsx`
-- [ ] T040 [US6] Create Assessment Hub overview page listing all 5 assessments in `src/app/(dashboard)/discovery/page.tsx`
-- [ ] T041 [US6] Create Interactive Assessment Quiz view with save-and-exit capability in `src/app/(dashboard)/discovery/quiz/[id]/page.tsx`
+- [x] T038 [P] [US6] Create Assessment submission and archetype scoring API handler in `src/app/api/discovery/assessment/route.ts`
+- [x] T039 [P] [US6] Create Assessment Question Engine component (with A-E option buttons and progress bar) per `App-Screens/4-Career Discovery.../2.careerDiscoveryQuiz.png` in `src/components/discovery/QuizEngine.tsx`
+- [x] T040 [US6] Create Assessment Hub overview page listing all 5 assessments per `App-Screens/4-Career Discovery.../1.careerDiscovery.png` in `src/app/(dashboard)/discovery/page.tsx`
+- [x] T041 [US6] Create Interactive Assessment Quiz view with save-and-exit capability per `App-Screens/4-Career Discovery.../2.careerDiscoveryQuiz.png` in `src/app/(dashboard)/discovery/quiz/[id]/page.tsx`
 
 ---
 
@@ -138,9 +137,9 @@
 
 **Independent Test**: Complete assessments, navigate to Career Matchmaker, verify ranked matches, click a career option, and verify full profile page renders with skills, duties, and salary distributions.
 
-- [ ] T042 [P] [US7] Create Career Profile card component with match tier badge in `src/components/discovery/CareerProfileCard.tsx`
-- [ ] T043 [US7] Create Career Options Matchmaker dashboard view in `src/app/(dashboard)/discovery/options/page.tsx`
-- [ ] T044 [US7] Create Detailed Career Profile view (skills, entry requirements, growth paths, salary 10th/median/90th percentiles) in `src/app/(dashboard)/discovery/profile/[id]/page.tsx`
+- [x] T042 [P] [US7] Create Career Profile card component with match tier badge per `App-Screens/4-Career Discovery.../6.CareerOptions.png` in `src/components/discovery/CareerProfileCard.tsx`
+- [x] T043 [US7] Create Career Options Matchmaker dashboard view per `App-Screens/4-Career Discovery.../6.CareerOptions.png` in `src/app/(dashboard)/discovery/options/page.tsx`
+- [x] T044 [US7] Create Detailed Career Profile view (skills, entry requirements, growth paths, salary 10th/median/90th percentiles) per `App-Screens/4-Career Discovery.../7.Careerprofile.png` in `src/app/(dashboard)/discovery/profile/[id]/page.tsx`
 
 ---
 
@@ -151,9 +150,9 @@
 **Independent Test**: Open a 5-stage roadmap, complete a practice task, and verify XP increases, stage progress updates, and dependent stages unlock.
 
 - [ ] T045 [P] [US8] Create Roadmap progress update API handler in `src/app/api/roadmap/progress/route.ts`
-- [ ] T046 [P] [US8] Create Timeline milestone visualizer component in `src/components/roadmap/Timeline.tsx`
-- [ ] T047 [P] [US8] Create Milestone Stage Card component (showing Completed/In Progress/Locked states) in `src/components/roadmap/MilestoneCard.tsx`
-- [ ] T048 [US8] Create Adaptive Career Roadmap main page view in `src/app/(dashboard)/roadmap/page.tsx`
+- [ ] T046 [P] [US8] Create Timeline milestone visualizer component per `App-Screens/5-Career-Roadmap.../1-Career Roadmap Overview.png` in `src/components/roadmap/Timeline.tsx`
+- [ ] T047 [P] [US8] Create Milestone Stage Card component (showing Completed/In Progress/Locked states) per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/components/roadmap/MilestoneCard.tsx`
+- [ ] T048 [US8] Create Adaptive Career Roadmap main page view per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/app/(dashboard)/roadmap/page.tsx`
 
 ---
 
@@ -163,7 +162,7 @@
 
 **Independent Test**: Open the AI Mentor panel from any page, verify the 3rd-party iframe loads cleanly, interact with its native chat/voice/attachment capabilities, and verify platform navigation links work.
 
-- [ ] T049 [P] [US11] Create AI Avatar Mentor embedded iframe drawer component with platform quick-links header in `src/components/mentor/AIMentorIframeDrawer.tsx`
+- [ ] T049 [P] [US11] Create AI Avatar Mentor embedded iframe drawer component with platform quick-links header per `App-Screens/7-AI Avatar Mentor/AI Mentor.png` in `src/components/mentor/AIMentorIframeDrawer.tsx`
 - [ ] T050 [US11] Mount AI Mentor drawer globally in main dashboard layout shell `src/app/(dashboard)/layout.tsx`
 
 ---
@@ -174,7 +173,7 @@
 
 **Independent Test**: Complete mock interviews, navigate to history page, and verify all past sessions display with date, mode, duration, score, and report links.
 
-- [ ] T051 [P] [US10] Create Interview Practice History list view in `src/app/(dashboard)/interview/history/page.tsx`
+- [ ] T051 [P] [US10] Create Interview Practice History list view per `App-Screens/6-Mock Interviews.../5-Mock interview-Interviews.png` in `src/app/(dashboard)/interview/history/page.tsx`
 
 ---
 
@@ -212,12 +211,12 @@
 
 ## Implementation Strategy
 
-### MVP First (Phases 1–3: Auth + Whitelist)
+### MVP First (Phases 1–3: Auth + Google Sign-In)
 
 1. Complete Phase 1: Setup
 2. Complete Phase 2: Foundational (Prisma, Supabase Auth, Configurable LLM client)
-3. Complete Phase 3: User Story 1 (Google OAuth & Whitelist)
-4. **VALIDATE MVP**: Confirm non-whitelisted emails are blocked and whitelisted emails pass.
+3. Complete Phase 3: User Story 1 (Google OAuth & Open Registration)
+4. **VALIDATE MVP**: Confirm Google accounts sign in and proceed to onboarding or dashboard.
 
 ### Incremental Delivery
 

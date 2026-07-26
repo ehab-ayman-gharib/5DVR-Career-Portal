@@ -4,19 +4,59 @@
 
 ---
 
+## 0. Active Resume Management
+
+### `GET /api/cv/resume`
+Retrieves the user's latest active resume stored in PostgreSQL.
+
+#### Response 200 OK
+```json
+{
+  "resume": {
+    "id": "res_12345",
+    "fileName": "John_Doe_Resume.pdf",
+    "fileSizeBytes": 1245000,
+    "uploadedAt": "2026-07-26T12:00:00.000Z",
+    "parsedText": "John Doe Software Engineer..."
+  }
+}
+```
+
+### `POST /api/cv/resume`
+Uploads or updates the candidate's active resume in PostgreSQL.
+
+#### Request (multipart/form-data)
+- `file`: File (PDF/DOCX, <= 5MB)
+
+#### Response 200 OK
+```json
+{
+  "success": true,
+  "resume": {
+    "id": "res_12345",
+    "fileName": "John_Doe_Resume.pdf",
+    "fileSizeBytes": 1245000,
+    "uploadedAt": "2026-07-26T12:00:00.000Z"
+  }
+}
+```
+
+---
+
 ## 1. ATS Score Analysis
 
 ### `POST /api/cv/ats`
 
-Analyzes uploaded CV and returns ATS Score breakdown.
+Analyzes active or uploaded CV and returns ATS Score breakdown.
 
 #### Request (multipart/form-data)
-- `resume`: File (PDF/DOCX, <= 5MB)
+- `file`: File (PDF/DOCX, <= 5MB)
 
 #### Response 200 OK
 ```json
 {
   "reportId": "ats_12345",
+  "resumeId": "res_12345",
   "score": 74,
   "metrics": {
     "missingKeywordsCount": 5,
@@ -44,13 +84,15 @@ Analyzes uploaded CV and returns ATS Score breakdown.
 
 ### `POST /api/cv/match`
 
-Compares uploaded CV against typed/pasted job description text.
+Compares candidate's active resume against typed/pasted job description text using LLM structured output.
 
 #### Request JSON
 ```json
 {
-  "resumeId": "res_554433",
-  "jobDescriptionText": "Seeking a Senior Data Analyst proficient in SQL, Python, and Tableau..."
+  "resumeId": "res_12345",
+  "jobDescriptionText": "Seeking a Senior Data Analyst proficient in SQL, Python, and Tableau...",
+  "positionTitle": "Senior Data Analyst",
+  "companyName": "TechCorp"
 }
 ```
 
@@ -58,6 +100,8 @@ Compares uploaded CV against typed/pasted job description text.
 ```json
 {
   "matchReportId": "jdm_998877",
+  "resumeId": "res_12345",
+  "resumeFileName": "John_Doe_Resume.pdf",
   "overallMatchScore": 83,
   "matchQualityTier": "STRONG_FIT",
   "context": {

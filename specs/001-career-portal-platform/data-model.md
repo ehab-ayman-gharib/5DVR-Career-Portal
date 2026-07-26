@@ -53,6 +53,7 @@ User profile linked to Supabase Auth User ID (`sub`).
 - `fieldOfInterest` (String, Optional)
 - `experienceLevel` (Enum: `ENTRY_LEVEL`, `MID_LEVEL`, `SENIOR`, `STUDENT`)
 - `careerGoal` (String, Optional)
+- `skills` (Array of String, default `[]`) — list of candidate skills added manually or extracted from CV
 - `createdAt` (DateTime, default `now()`)
 - `updatedAt` (DateTime, updated)
 

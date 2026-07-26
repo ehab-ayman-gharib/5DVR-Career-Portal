@@ -6,24 +6,36 @@
 
 **Status**: Draft
 
-**Input**: User description: "Build the AI-powered Career Portal — a career readiness and development platform with Google OAuth authentication with email whitelisting, dual-path onboarding (Student vs. Job Seeker), personalized dashboards, CV Intelligence Center with ATS scoring and Job Description matching, Career Discovery quizzes for students, adaptive career roadmaps, AI-powered mock interview simulator with feedback reports, and an AI Avatar Mentor."
+**Input**: User description: "Build the AI-powered Career Portal — a career readiness and development platform with Google OAuth authentication, dual-path onboarding (Student vs. Job Seeker), personalized dashboards, CV Intelligence Center with ATS scoring and Job Description matching, Career Discovery quizzes for students, adaptive career roadmaps, AI-powered mock interview simulator with feedback reports, and an AI Avatar Mentor."
+
+## Visual Design References (`App-Screens`)
+
+All user interfaces MUST strictly follow the design layouts, component structures, color schemes, and visual telemetry specified in the reference screenshots located in `App-Screens/`:
+
+| Module / User Story | Reference Screenshots (`App-Screens/`) | Key Design Elements |
+|---|---|---|
+| **US1 & US2: Onboarding & Path Selection** | `1-Onboarding/OnboardingLight.png`, `CvUpload.png`, `PreData.png` | Dual-path cards ("Start My Journey" vs "Get Interview-Ready"), drag-and-drop CV uploader, student starter profile form |
+| **US3: Personalized Dashboards** | `2-Dashboard Home/JobSeekerDashboard.png`, `StudentDashboard.png` | Mon-Sun activity streak tracker, radial ATS score gauge, task list, quick-action cards, roadmap progress widget |
+| **US4 & US5: CV Intelligence Center** | `3-CV Center/CV_ATS.png`, `ATSResult.png`, `CV_JobDescription.png`, `CV_JobDescription_Result.png` | Consolidated score out of 100, red flag / formatting issue pills, side-by-side keyword analysis, salary negotiation alignment tips |
+| **US6 & US7: Career Discovery & Profile** | `4-Career Discovery.../1.careerDiscovery.png` through `8.career profile modal.png` | 5 assessment cards, quiz question UI with progress bar, archetype result cards, ranked matchmaker options, salary distribution graph |
+| **US8: Adaptive Career Roadmap** | `5-Career-Roadmap.../1-Career Roadmap Overview.png` through `Stage details modal.png` | Milestone timeline cards, Completed / In Progress / Locked state badges, stage detail checklist modal, XP score counter |
+| **US9 & US10: Mock Interview Simulator** | `6-Mock Interviews.../1-mock interview.png` through `7-Mock interview-Report.png` | Interview mode cards, pre-start prep checklist, 3rd-party avatar iframe container, STAR transcript comparison with ❌/✅ indicators, practice history table |
+| **US11: AI Avatar Mentor** | `7-AI Avatar Mentor/AI Mentor.png` | Side drawer hosting embedded 3rd-party iframe, platform quick-action navigation header links |
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 — Google Authentication & Email Whitelisting (Priority: P1)
+### User Story 1 — Google Authentication & Open Registration (Priority: P1)
 
-A user visits the Career Portal and clicks "Sign in with Google." The system authenticates them via Google OAuth, then checks their email against a pre-approved whitelist. Only whitelisted users can create a profile and access the platform. Non-whitelisted users see a clear "Access Denied" message and cannot reach any internal content. Unauthenticated visitors are redirected to the login page for all protected routes.
+A user visits the Career Portal and clicks "Sign in with Google." The system authenticates them via Google OAuth. Any valid Google account holder can register, create a profile, and access the platform. Unauthenticated visitors are redirected to the login page for all protected routes.
 
 **Why this priority**: Authentication and authorization are the absolute prerequisite — no other feature functions without a gated entry point.
 
-**Independent Test**: Sign in with a whitelisted Google account and confirm profile creation flow appears. Sign in with a non-whitelisted account and confirm access is denied. Visit protected routes unauthenticated and confirm redirect to login.
+**Independent Test**: Sign in with any Google account and confirm profile creation/dashboard flow appears. Visit protected routes unauthenticated and confirm redirect to login.
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is on the landing page, **When** they sign in with Google using a whitelisted email, **Then** they are directed to onboarding (first time) or their dashboard (returning user).
-2. **Given** a user signs in with a non-whitelisted Google email, **Then** they see an "Access Denied" page and cannot access any internal route.
-3. **Given** an unauthenticated visitor, **When** they navigate to any protected route, **Then** they are redirected to the landing/login page.
-4. **Given** a user whose email is removed from the whitelist while they are logged in, **When** they make their next request, **Then** their session is invalidated and they are redirected to login.
+1. **Given** a user is on the landing page, **When** they sign in with Google, **Then** they are directed to onboarding (first time) or their dashboard (returning user).
+2. **Given** an unauthenticated visitor, **When** they navigate to any protected route, **Then** they are redirected to the landing/login page.
 
 ---
 
@@ -43,9 +55,9 @@ The chosen path determines their entire dashboard experience going forward.
 
 1. **Given** a new authenticated user, **When** they reach the onboarding screen, **Then** they see two path options: "Start My Journey" (Student) and "Get Interview-Ready" (Job Seeker).
 2. **Given** a user selects "Job Seeker," **When** they proceed, **Then** they see a drag-and-drop CV upload zone (max 5MB) and an alternative "Build your starter profile instead" link.
-3. **Given** a Job Seeker uploads a valid CV, **When** parsing completes, **Then** their starter profile is automatically populated with extracted data (name, skills, experience, career history) and they can review and confirm before proceeding.
-4. **Given** a user selects "Student," **When** they proceed, **Then** they see the starter profile form (First Name, Second Name, Education, Field of Interest, Experience Level, Career Goal) which they fill out manually.
-5. **Given** a user completes onboarding via either path, **When** they are redirected, **Then** they land on the dashboard variant matching their chosen path with their starter profile fully saved.
+3. **Given** a Job Seeker uploads a valid CV, **When** parsing completes, **Then** their starter profile is automatically populated with extracted data (name, degree/education, career goal, skills tags) and they can interactively add new skills, remove extracted skills, and review/edit profile fields before confirming.
+4. **Given** a user selects "Student" or chooses manual profile entry, **When** they fill out the form, **Then** they can enter their details and manage their skills list directly.
+5. **Given** a user completes onboarding via either path, **When** they are redirected, **Then** they land on the dashboard variant matching their chosen path with their starter profile and custom skills array fully saved in the database.
 
 ---
 
@@ -206,7 +218,7 @@ An AI Avatar Mentor is accessible as an embedded side panel or dedicated view ac
 
 ### Functional Requirements
 
-- **FR-001**: The system MUST authenticate users exclusively via Google OAuth and verify their email against a whitelist before granting access.
+- **FR-001**: The system MUST authenticate users via Google OAuth and grant immediate registration and platform access to all valid Google accounts.
 - **FR-002**: The system MUST present two onboarding paths: "Student / Early Career" and "Job Seeker / Professional," and branch the entire experience accordingly.
 - **FR-003**: The system MUST support CV upload (drag-and-drop, max 5MB) with AI parsing during onboarding for the Job Seeker path.
 - **FR-004**: The system MUST provide a starter profile form (name, education, field of interest, experience level, career goal) for the Student path.
@@ -223,11 +235,10 @@ An AI Avatar Mentor is accessible as an embedded side panel or dedicated view ac
 - **FR-015**: The system MUST generate evaluation reports with an overall score (out of 100), category analysis, and transcript-vs-improved-answer comparisons.
 - **FR-016**: The system MUST maintain a chronological practice history log for all completed mock interviews.
 - **FR-017**: The system MUST embed an independent 3rd-party AI Avatar solution via `<iframe>` (in a side panel or dedicated view) containing native text input, voice-to-text capabilities, file attachments, and avatar interaction.
-- **FR-018**: The system MUST prevent non-whitelisted users from accessing any internal content or creating profiles.
+- **FR-018**: The system MUST redirect unauthenticated visitors from protected routes to the landing/login page.
 
 ### Key Entities
 
-- **WhitelistEntry**: A pre-approved email address permitted to access the platform. Attributes: `email`, `addedAt`.
 - **UserProfile**: The authenticated user's identity and preferences. Attributes: `id`, `email`, `displayName`, `path` (Student or Job Seeker), `createdAt`.
 - **DailyStreak**: Tracks consecutive daily engagement. Attributes: `userId`, `currentStreak`, `weeklyLog` (Mon–Sun).
 - **Resume**: An uploaded CV document. Attributes: `id`, `userId`, `fileUrl`, `parsedData`, `uploadedAt`.
@@ -244,7 +255,7 @@ An AI Avatar Mentor is accessible as an embedded side panel or dedicated view ac
 
 ### Measurable Outcomes
 
-- **SC-001**: 100% of non-whitelisted sign-in attempts are blocked and shown an access denied message within 2 seconds.
+- **SC-001**: 100% of authentic Google sign-in attempts succeed and redirect to onboarding (new user) or dashboard (returning user) within 2 seconds.
 - **SC-002**: New users complete the onboarding flow (path selection through profile/CV) in under 3 minutes.
 - **SC-003**: The ATS score report generates within 10 seconds of CV upload for files up to 5MB.
 - **SC-004**: The JD match report renders within 15 seconds after both CV and job description are submitted.
@@ -257,7 +268,7 @@ An AI Avatar Mentor is accessible as an embedded side panel or dedicated view ac
 
 ## Assumptions
 
-- The whitelist of approved emails will be pre-populated and managed by administrators through a separate administrative interface or direct database access (admin panel is out of scope for this feature spec).
+- Registration and authentication are open to any valid Google account holder via Google OAuth.
 - Career discovery assessment question content (the actual quiz questions and scoring logic) will be provided or curated by the content/product team.
 - Salary data for career profiles and JD match salary alignment will be sourced from an external dataset or API.
 - The entire AI Avatar module — encompassing the visual avatar, text chat input, voice-to-text recording, and file attachments — is an independent 3rd-party web solution embedded directly into the platform via `<iframe>`. The Career Portal handles embedding and layout container integration, while the 3rd-party iframe manages all conversational UI, voice input, file uploads, and avatar video generation.

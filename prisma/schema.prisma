@@ -1,0 +1,241 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserPath {
+  STUDENT
+  JOB_SEEKER
+}
+
+enum ExperienceLevel {
+  ENTRY_LEVEL
+  MID_LEVEL
+  SENIOR
+  STUDENT
+}
+
+enum AssessmentType {
+  CAREER_INTEREST
+  PERSONALITY_TRAITS
+  LEARNING_READINESS
+  COGNITIVE_ABILITIES
+  MOTIVATORS
+}
+
+enum AssessmentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum MatchCategory {
+  STRONG_MATCH
+  GOOD_POTENTIAL
+  WORTH_EXPLORING
+}
+
+enum StageStatus {
+  COMPLETED
+  IN_PROGRESS
+  LOCKED
+}
+
+enum ItemType {
+  LECTURE
+  PRACTICE_TASK
+  INTERVIEW_CHECKPOINT
+}
+
+enum InterviewMode {
+  TECHNICAL
+  SALARY_NEGOTIATION
+  HR_BEHAVIORAL
+  PROBLEM_SOLVING
+}
+
+enum InterviewStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum MatchTier {
+  STRONG_FIT
+  GOOD_POTENTIAL
+  WORTH_EXPLORING
+  WEAK_MATCH
+}
+
+model WhitelistEntry {
+  id      String   @id @default(uuid())
+  email   String   @unique
+  addedAt DateTime @default(now())
+  notes   String?
+}
+
+model UserProfile {
+  id              String          @id // Matches Supabase auth.users.id
+  email           String          @unique
+  firstName       String
+  lastName        String
+  path            UserPath
+  education       String?
+  fieldOfInterest String?
+  experienceLevel ExperienceLevel @default(ENTRY_LEVEL)
+  careerGoal      String?
+  skills          String[]        @default([])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  dailyStreak   DailyStreak?
+  resumes       Resume[]
+  assessments   Assessment[]
+  careerMatches CareerMatch[]
+  roadmap       Roadmap?
+  interviews    MockInterview[]
+}
+
+model DailyStreak {
+  id             String      @id @default(uuid())
+  userId         String      @unique
+  user           UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStreak  Int         @default(1)
+  lastActiveDate DateTime    @default(now())
+  weeklyLog      Json // { mon: bool, tue: bool, wed: bool, thu: bool, fri: bool, sat: bool, sun: bool }
+}
+
+model Resume {
+  id            String   @id @default(uuid())
+  userId        String
+  user          UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName      String
+  fileUrl       String
+  fileSizeBytes Int
+  parsedText    String   @db.Text
+  parsedData    Json // { skills: [], experience: [], education: [] }
+  uploadedAt    DateTime @default(now())
+
+  atsReport    ATSReport?
+  jdMatches    JDMatchReport[]
+}
+
+model ATSReport {
+  id                String   @id @default(uuid())
+  resumeId          String   @unique
+  resume            Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  score             Int
+  missingKeywords   Json
+  formattingIssues  Json
+  redFlags          Json
+  actionableFixes   Json
+  createdAt         DateTime @default(now())
+}
+
+model JDMatchReport {
+  id                 String    @id @default(uuid())
+  resumeId           String
+  resume             Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionText String    @db.Text
+  positionTitle      String?
+  companyName        String?
+  matchScore         Int
+  matchTier          MatchTier
+  strengths          Json
+  criticalGaps       Json
+  keywordAnalysis    Json
+  salaryMin          Int?
+  salaryMax          Int?
+  targetSalary       Int?
+  negotiationTip     String?   @db.Text
+  createdAt          DateTime  @default(now())
+}
+
+model Assessment {
+  id           String           @id @default(uuid())
+  userId       String
+  user         UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         AssessmentType
+  status       AssessmentStatus @default(NOT_STARTED)
+  answers      Json // key-value responses
+  scoreSummary Json?
+  completedAt  DateTime?
+}
+
+model CareerMatch {
+  id            String        @id @default(uuid())
+  userId        String
+  user          UserProfile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  careerTitle   String
+  matchScore    Int
+  matchCategory MatchCategory
+  whyFits       String        @db.Text
+  skillGaps     Json
+  createdAt     DateTime      @default(now())
+}
+
+model Roadmap {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  careerPathTitle   String
+  jobReadinessScore Int      @default(0)
+  totalXP           Int      @default(0)
+  estimatedMonths   Int      @default(4)
+  createdAt         DateTime @default(now())
+
+  stages RoadmapStage[]
+}
+
+model RoadmapStage {
+  id              String      @id @default(uuid())
+  roadmapId       String
+  roadmap         Roadmap     @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  stageOrder      Int
+  title           String
+  status          StageStatus @default(LOCKED)
+  progressPercent Int         @default(0)
+
+  items RoadmapItem[]
+}
+
+model RoadmapItem {
+  id          String       @id @default(uuid())
+  stageId     String
+  stage       RoadmapStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  itemType    ItemType
+  title       String
+  isCompleted Boolean      @default(false)
+  xpValue     Int          @default(50)
+}
+
+model MockInterview {
+  id              String          @id @default(uuid())
+  userId          String
+  user            UserProfile     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode            InterviewMode
+  durationSeconds Int
+  status          InterviewStatus @default(IN_PROGRESS)
+  overallScore    Int?
+  startedAt       DateTime        @default(now())
+  completedAt     DateTime?
+
+  report InterviewReport?
+}
+
+model InterviewReport {
+  id                   String        @id @default(uuid())
+  interviewId          String        @unique
+  interview            MockInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  qualitativeSummary   String        @db.Text
+  communicationScore   Int
+  technicalDepthScore  Int
+  categoryAnalysis     Json
+  transcriptComparison Json
+  createdAt            DateTime      @default(now())
+}

@@ -32,27 +32,15 @@ LLM_MODEL_ID=Qwen/Qwen3.6-27B-FP8
 
 ---
 
-## 2. Seed Whitelist Data
+## 2. End-to-End Validation Scenarios
 
-Insert test emails into Supabase PostgreSQL:
-```sql
-INSERT INTO "WhitelistEntry" (id, email, "addedAt")
-VALUES 
-  (gen_random_uuid(), 'whitelisted@example.com', NOW()),
-  (gen_random_uuid(), 'student@example.com', NOW());
-```
-
----
-
-## 3. End-to-End Validation Scenarios
-
-### Scenario 1: Unwhitelisted Email Block
+### Scenario 1: Google OAuth Registration & Login
 1. Navigate to `http://localhost:3000`.
-2. Click "Sign in with Google" and authenticate using `unapproved@example.com`.
-3. **Expected Outcome**: Redirected immediately to `http://localhost:3000/access-denied`. Dashboard routes remain inaccessible.
+2. Click "Sign in with Google" and authenticate using any Google account.
+3. **Expected Outcome**: New users are redirected to `http://localhost:3000/onboarding` to select their path. Returning users are redirected to `http://localhost:3000/dashboard`.
 
 ### Scenario 2: Student Dual-Path Onboarding & Discovery
-1. Sign in using `student@example.com` (whitelisted).
+1. Sign in using a Google account (`student@example.com`).
 2. On the Onboarding screen, choose **"Start My Journey" (Student)**.
 3. Fill out the starter profile form (Name, Education, Goal) and submit.
 4. **Expected Outcome**: Redirected to Student Dashboard displaying streak tracker, discovery assessment CTA, and 0% roadmap progress.
@@ -60,7 +48,7 @@ VALUES
 6. **Expected Outcome**: Career Archetype results render; career matches show correlation scores.
 
 ### Scenario 3: Job Seeker CV Upload & ATS Analysis
-1. Sign in using `whitelisted@example.com` (whitelisted).
+1. Sign in using a Google account (`jobseeker@example.com`).
 2. Choose **"Get Interview-Ready" (Job Seeker)** on Onboarding screen.
 3. Drag and drop a sample 2-page PDF resume (under 5MB).
 4. **Expected Outcome**: Profile auto-populates from parsed CV data. After confirming, user lands on Job Seeker Dashboard with radial ATS Score widget (e.g. 74/100).

@@ -4,17 +4,15 @@
 **Created**: 2026-07-21
 **Status**: Completed
 
-## 1. Authentication & Whitelisting Architecture
+## 1. Authentication Architecture
 
 ### Decision
-Use **Supabase Auth with Google OAuth provider** combined with Next.js App Router Middleware (`middleware.ts`) and a Database Whitelist table (`WhitelistEntry`).
+Use **Supabase Auth with Google OAuth provider** combined with Next.js App Router Middleware (`middleware.ts`) for open registration of all Google accounts.
 
 ### Rationale
 - Supabase Auth handles OAuth flow securely, returning JWT sessions.
-- Middleware intercepts every request before page rendering or API route execution.
-- Middleware checks session validity and queries/caches whitelist status for the authenticated email address.
-- Non-whitelisted users are immediately redirected to `/access-denied`.
-- Session invalidation happens automatically on active requests if the email is removed from the whitelist table.
+- Middleware intercepts requests to protect private routes and verify authenticated sessions.
+- Any valid Google account holder can register and complete onboarding without restriction.
 
 ### Alternatives Considered
 - *Custom OAuth with NextAuth.js*: Supabase Auth is already specified in the Constitution and directly integrates with PostgreSQL Row Level Security (RLS) and Prisma ORM.

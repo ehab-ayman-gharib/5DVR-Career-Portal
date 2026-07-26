@@ -6,7 +6,7 @@
 
 ## Summary
 
-The Career Portal platform is an AI-powered, adaptive career readiness web application built with Next.js (App Router), Tailwind CSS, Supabase (PostgreSQL), Prisma ORM, Google OAuth with email whitelisting middleware, OpenAI/Whisper APIs, and a 3rd-party avatar iframe integration. It provides dual-path onboarding (Student vs. Job Seeker), personalized dashboards, CV Intelligence with ATS scoring & text-based JD matching, 5-stage student career discovery assessments, adaptive roadmaps with XP/streak gamification, 4 mock interview modes with STAR method transcript evaluation, and an AI Avatar Mentor.
+The Career Portal platform is an AI-powered, adaptive career readiness web application built with Next.js (App Router), Tailwind CSS, Supabase (PostgreSQL), Prisma ORM, Google OAuth authentication, OpenAI/Whisper APIs, and a 3rd-party avatar iframe integration. It provides dual-path onboarding (Student vs. Job Seeker), personalized dashboards, CV Intelligence with ATS scoring & text-based JD matching, 5-stage student career discovery assessments, adaptive roadmaps with XP/streak gamification, 4 mock interview modes with STAR method transcript evaluation, and an AI Avatar Mentor.
 
 ## Technical Context
 
@@ -26,7 +26,7 @@ The Career Portal platform is an AI-powered, adaptive career readiness web appli
 
 **Performance Goals**: ATS report generation < 10s, JD match report generation < 15s, Embedded AI Avatar iframe load latency < 3s, Page route navigation < 2s
 
-**Constraints**: Strict email whitelisting enforcement, max 5MB resume file size upload limit, entire AI Avatar module (visual avatar, text chat, voice-to-text, attachments) embedded via 3rd-party iframe, zero data loss on quiz exit
+**Constraints**: Max 5MB resume file size upload limit, entire AI Avatar module (visual avatar, text chat, voice-to-text, attachments) embedded via 3rd-party iframe, zero data loss on quiz exit
 
 **Scale/Scope**: 2 distinct user persona paths, 8 full product modules, 11 primary user stories, 18 testable functional requirements
 
@@ -41,14 +41,14 @@ The Career Portal platform is an AI-powered, adaptive career readiness web appli
 | **III. Strict Typing & Robust Error Handling** | PASS | TypeScript strict mode enforced across all models, Prisma schemas, and API contracts. Error boundaries for file uploads and LLM connectors. |
 | **IV. Comprehensive Testing** | PASS | Test verification planned for XP tracking, streak counts, assessment state transitions, and STAR method transcript scoring. |
 | **V. Performance & Low Latency** | PASS | Active loading states for AI feedback generation; 5MB payload enforcement; optimized streaming response handling. |
-| **Tech Standard: Google OAuth & Whitelist** | PASS | Supabase Auth + Next.js Middleware checking PostgreSQL `WhitelistEntry` table. |
+| **Tech Standard: Google OAuth & Registration** | PASS | Supabase Auth + Next.js Middleware handling open registration for all Google accounts. |
 | **Tech Standard: OpenAI/Whisper APIs** | PASS | Structured Outputs schema validation for CV parsing, ATS scoring, and STAR interview reports. |
 
 ## Project Structure
 
 ### Documentation (this feature)
 
-```text
+App-Screens/                  # Visual Design References (7 module screenshot directories)
 specs/001-career-portal-platform/
 ├── plan.md              # This implementation plan
 ├── research.md          # Phase 0 technical research findings
