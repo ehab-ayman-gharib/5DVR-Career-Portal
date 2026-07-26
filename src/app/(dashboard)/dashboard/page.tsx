@@ -30,7 +30,7 @@ export default function DashboardPage() {
     improvement: number;
   }>({
     currentStreak: 1,
-    weeklyLog: { mon: true, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+    weeklyLog: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
     atsScore: 0,
     interviewsDone: 0,
     improvement: 0,

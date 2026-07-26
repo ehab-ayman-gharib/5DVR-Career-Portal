@@ -19,7 +19,7 @@ interface StreakTrackerProps {
 
 export function StreakTracker({
   currentStreak = 1,
-  weeklyLog = { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: true },
+  weeklyLog = {},
 }: StreakTrackerProps) {
   // Determine current day of week (0 = Sunday, 1 = Monday, etc.)
   const todayIndex = new Date().getDay();

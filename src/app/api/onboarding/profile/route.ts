@@ -75,21 +75,41 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Helper to get current day key
+    const getTodayKey = (): 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun' => {
+      const day = new Date().getDay();
+      const map: Record<number, 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'> = {
+        0: 'sun',
+        1: 'mon',
+        2: 'tue',
+        3: 'wed',
+        4: 'thu',
+        5: 'fri',
+        6: 'sat',
+      };
+      return map[day] || 'sun';
+    };
+
+    const todayKey = getTodayKey();
+
     // Initialize daily streak
     await prisma.dailyStreak.upsert({
       where: { userId: user.id },
-      update: {},
+      update: {
+        lastActiveDate: new Date(),
+      },
       create: {
         userId: user.id,
         currentStreak: 1,
         weeklyLog: {
-          mon: true,
+          mon: false,
           tue: false,
           wed: false,
           thu: false,
           fri: false,
           sat: false,
           sun: false,
+          [todayKey]: true,
         },
       },
     });
