@@ -8,7 +8,7 @@
 
 ### `POST /api/interview/session`
 
-Initializes a new mock interview session and returns avatar iframe config.
+Initializes a new mock interview session and returns avatar iframe config. Questions and conversational interaction are handled directly inside the 3rd-party embedded avatar interface.
 
 #### Request JSON
 ```json
@@ -22,38 +22,26 @@ Initializes a new mock interview session and returns avatar iframe config.
 {
   "interviewId": "int_776655",
   "mode": "TECHNICAL",
+  "durationSeconds": 1200,
   "avatarConfig": {
-    "embedUrl": "https://avatar-provider.example.com/embed/session_abc123",
-    "token": "tok_xyz789"
-  },
-  "questions": [
-    {
-      "id": "q1",
-      "text": "Tell me about a complex database query optimization you performed.",
-      "suggestedDurationSeconds": 180
-    }
-  ]
+    "embedUrl": "https://5d-ai-hub.com/avatars/5dVR@HelmyDev_7cc59"
+  }
 }
 ```
 
 ---
 
-## 2. Submit Answer & Complete Interview
+## 2. Complete Interview & Request Evaluation
 
 ### `POST /api/interview/evaluate`
 
-Submits transcripts/audio and retrieves evaluation report.
+Completes the avatar interview session and retrieves recruiter evaluation report.
 
 #### Request JSON
 ```json
 {
   "interviewId": "int_776655",
-  "responses": [
-    {
-      "questionId": "q1",
-      "transcript": "So we had an internal dashboard that was slow, so I looked at SQL queries and fixed them."
-    }
-  ]
+  "elapsedSeconds": 940
 }
 ```
 
@@ -61,19 +49,32 @@ Submits transcripts/audio and retrieves evaluation report.
 ```json
 {
   "reportId": "rep_112233",
-  "overallScore": 82,
-  "qualitativeSummary": "Candidate demonstrates solid technical foundations, but responses should include quantified outcomes.",
-  "communicationScore": 8,
-  "technicalDepthScore": 7,
-  "transcriptComparison": [
+  "interviewId": "int_776655",
+  "mode": "TECHNICAL",
+  "overallScore": 88,
+  "qualitativeSummary": "Candidate completed the full AI Avatar interview round with clear articulation and solid domain knowledge. The responses demonstrated strong structure, confident delivery, and effective technical reasoning throughout the conversation.",
+  "communicationScore": 9,
+  "technicalDepthScore": 8,
+  "categoryAnalysis": [
     {
-      "question": "Tell me about a complex database query optimization you performed.",
-      "detectedTranscript": "So we had an internal dashboard that was slow, so I looked at SQL queries and fixed them.",
-      "weaknesses": [
-        "No measurable impact",
-        "Technical details are vague"
-      ],
-      "improvedAnswer": "In my previous role, our main dashboard suffered from 8-second render latencies. I analyzed the underlying PostgreSQL execution plan, refactored sub-optimal JOINs into CTEs, and added composite indexes, reducing query execution time by 65% to under 2.8 seconds."
+      "category": "Structure & Flow",
+      "score": 90,
+      "summary": "Excellent progression and structured presentation of ideas."
+    },
+    {
+      "category": "Technical Accuracy & Vocabulary",
+      "score": 86,
+      "summary": "Accurate domain terminology and strong problem-solving logic."
+    },
+    {
+      "category": "Executive Tone & Confidence",
+      "score": 92,
+      "summary": "Direct, clear, and highly engaging verbal delivery."
+    },
+    {
+      "category": "Engagement & Pace",
+      "score": 84,
+      "summary": "Well-paced timing with good audio-visual presence."
     }
   ]
 }

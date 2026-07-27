@@ -35,7 +35,6 @@ export function Sidebar({ userPath = 'JOB_SEEKER', userName = 'User', onOpenMent
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, paths: ['STUDENT', 'JOB_SEEKER'] },
     { name: 'CV Center', href: '/cv-center', icon: FileText, paths: ['JOB_SEEKER'] },
     { name: 'Career Discovery', href: '/discovery', icon: Compass, paths: ['STUDENT'] },
-    { name: 'Career Roadmap', href: '/roadmap', icon: Map, paths: ['STUDENT'] },
     { name: 'Mock Interviews', href: '/interview', icon: Video, paths: ['STUDENT', 'JOB_SEEKER'] },
   ];
 

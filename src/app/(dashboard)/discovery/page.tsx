@@ -15,6 +15,7 @@ const iconMap: Record<string, any> = {
 
 export default function CareerDiscoveryHubPage() {
   const [completedTypes, setCompletedTypes] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAssessments() {
@@ -32,6 +33,8 @@ export default function CareerDiscoveryHubPage() {
         }
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchAssessments();

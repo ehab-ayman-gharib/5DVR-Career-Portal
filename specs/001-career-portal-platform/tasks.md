@@ -95,15 +95,15 @@
 
 **Goal**: Provide 4 mock interview modes with 3rd-party Avatar iframe integration and OpenAI STAR method evaluation feedback reports.
 
-**Independent Test**: Select Technical Interview mode, verify preparation checklist and embedded Avatar iframe, submit answer transcripts, and verify evaluation report with scores and `✅ Improved Answer` suggestions.
+**Independent Test**: Select Technical Interview mode, verify embedded 3rd-party Avatar iframe loads cleanly, count interview duration, complete session, and verify evaluation report with scores and category feedback.
 
-- [ ] T029 [P] [US9] Create Mock Interview Session creation API handler (`/api/interview/session`) returning avatar iframe config in `src/app/api/interview/session/route.ts` per `contracts/mock-interview.md`
-- [ ] T030 [P] [US9] Create Interview Evaluation API handler (`/api/interview/evaluate`) executing STAR scoring in `src/app/api/interview/evaluate/route.ts` per `contracts/mock-interview.md`
-- [ ] T031 [P] [US9] Create 3rd-Party Avatar Iframe container component per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/4-Mock interview-Questions.png` in `src/components/interview/AvatarIframe.tsx`
-- [ ] T032 [P] [US9] Create STAR Method Transcript Comparison component per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/6-Mock interview-Feedback.png` in `src/components/interview/TranscriptComparison.tsx`
-- [ ] T033 [US9] Create Interview Mode Selector page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/1-mock interview.png` in `src/app/(dashboard)/interview/page.tsx`
-- [ ] T034 [US9] Create Active Interview Room view with embedded avatar iframe and question prompts per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/4-Mock interview-Questions.png` in `src/app/(dashboard)/interview/room/[id]/page.tsx`
-- [ ] T035 [US9] Create Interview Evaluation & Feedback Report page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/7-Mock interview-Report.png` in `src/app/(dashboard)/interview/report/[id]/page.tsx`
+- [X] T029 [P] [US9] Create Mock Interview Session creation API handler (`/api/interview/session`) returning avatar iframe config in `src/app/api/interview/session/route.ts` per `contracts/mock-interview.md`
+- [X] T030 [P] [US9] Create Interview Evaluation API handler (`/api/interview/evaluate`) evaluating avatar session in `src/app/api/interview/evaluate/route.ts` per `contracts/mock-interview.md`
+- [X] T031 [P] [US9] Create 3rd-Party Avatar Iframe container component in `src/components/interview/AvatarIframe.tsx`
+- [X] T032 [P] [US9] Create STAR Method Transcript Comparison component per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/6-Mock interview-Feedback.png` in `src/components/interview/TranscriptComparison.tsx`
+- [X] T033 [US9] Create Interview Mode Selector page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/1-mock interview.png` in `src/app/(dashboard)/interview/page.tsx`
+- [X] T034 [US9] Create Active Interview Room view with embedded avatar iframe and session timer in `src/app/(dashboard)/interview/room/[id]/page.tsx`
+- [X] T035 [US9] Create Interview Evaluation & Feedback Report page per `App-Screens/6-Mock Interviews-AI Avatar Interviewer/7-Mock interview-Report.png` in `src/app/(dashboard)/interview/report/[id]/page.tsx`
 
 ---
 
@@ -149,10 +149,10 @@
 
 **Independent Test**: Open a 5-stage roadmap, complete a practice task, and verify XP increases, stage progress updates, and dependent stages unlock.
 
-- [ ] T045 [P] [US8] Create Roadmap progress update API handler in `src/app/api/roadmap/progress/route.ts`
-- [ ] T046 [P] [US8] Create Timeline milestone visualizer component per `App-Screens/5-Career-Roadmap.../1-Career Roadmap Overview.png` in `src/components/roadmap/Timeline.tsx`
-- [ ] T047 [P] [US8] Create Milestone Stage Card component (showing Completed/In Progress/Locked states) per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/components/roadmap/MilestoneCard.tsx`
-- [ ] T048 [US8] Create Adaptive Career Roadmap main page view per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/app/(dashboard)/roadmap/page.tsx`
+- [X] T045 [P] [US8] Create Roadmap progress update API handler in `src/app/api/roadmap/progress/route.ts`
+- [X] T046 [P] [US8] Create Timeline milestone visualizer component per `App-Screens/5-Career-Roadmap.../1-Career Roadmap Overview.png` in `src/components/roadmap/Timeline.tsx`
+- [X] T047 [P] [US8] Create Milestone Stage Card component (showing Completed/In Progress/Locked states) per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/components/roadmap/MilestoneCard.tsx`
+- [X] T048 [US8] Create Adaptive Career Roadmap main page view per `App-Screens/5-Career-Roadmap.../3-Career Roadmap]details.png` in `src/app/(dashboard)/roadmap/page.tsx`
 
 ---
 
@@ -162,8 +162,8 @@
 
 **Independent Test**: Open the AI Mentor panel from any page, verify the 3rd-party iframe loads cleanly, interact with its native chat/voice/attachment capabilities, and verify platform navigation links work.
 
-- [ ] T049 [P] [US11] Create AI Avatar Mentor embedded iframe drawer component with platform quick-links header per `App-Screens/7-AI Avatar Mentor/AI Mentor.png` in `src/components/mentor/AIMentorIframeDrawer.tsx`
-- [ ] T050 [US11] Mount AI Mentor drawer globally in main dashboard layout shell `src/app/(dashboard)/layout.tsx`
+- [X] T049 [P] [US11] Create AI Avatar Mentor embedded iframe drawer component with platform quick-links header per `App-Screens/7-AI Avatar Mentor/AI Mentor.png` in `src/components/mentor/AIMentorIframeDrawer.tsx`
+- [X] T050 [US11] Mount AI Mentor drawer globally in main dashboard layout shell `src/app/(dashboard)/layout.tsx`
 
 ---
 
@@ -173,7 +173,7 @@
 
 **Independent Test**: Complete mock interviews, navigate to history page, and verify all past sessions display with date, mode, duration, score, and report links.
 
-- [ ] T051 [P] [US10] Create Interview Practice History list view per `App-Screens/6-Mock Interviews.../5-Mock interview-Interviews.png` in `src/app/(dashboard)/interview/history/page.tsx`
+- [X] T051 [P] [US10] Create Interview Practice History list view per `App-Screens/6-Mock Interviews.../5-Mock interview-Interviews.png` in `src/app/(dashboard)/interview/history/page.tsx`
 
 ---
 

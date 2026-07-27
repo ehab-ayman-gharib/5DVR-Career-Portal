@@ -48,18 +48,22 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="h-screen w-screen bg-slate-50 flex flex-col items-center justify-center text-slate-500 space-y-3 font-sans">
-        <Loader2 className="h-8 w-8 text-sky-600 animate-spin" />
-        <span className="text-xs font-bold">Loading your dashboard...</span>
+      <div className="h-screen w-screen bg-[#F8F9FE] flex flex-col items-center justify-center text-slate-500 space-y-3 font-sans">
+        <Loader2 className="h-9 w-9 text-[#6C5CE7] animate-spin" />
+        <span className="text-xs font-extrabold text-[#1E1B4B]">Loading your portal...</span>
       </div>
     );
   }
+
+  const fullName = userProfile
+    ? `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim()
+    : 'User';
 
   return (
     <div className="flex h-screen bg-[#F8F9FE] text-[#1E1B4B] overflow-hidden font-sans">
       <Sidebar
         userPath={userProfile?.path || 'JOB_SEEKER'}
-        userName={userProfile ? `${userProfile.firstName} ${userProfile.lastName}` : 'Norhan'}
+        userName={fullName || 'User'}
         onOpenMentor={() => setIsMentorOpen(true)}
       />
       <main className="flex-1 overflow-y-auto p-6 md:p-8">
@@ -73,3 +77,4 @@ export default function DashboardLayout({
     </div>
   );
 }
+

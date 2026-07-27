@@ -21,7 +21,8 @@ import {
 
 export default function DashboardPage() {
   const [userPath, setUserPath] = useState<'JOB_SEEKER' | 'STUDENT'>('JOB_SEEKER');
-  const [userName, setUserName] = useState<string>('User');
+  const [userName, setUserName] = useState<string>('');
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{
     currentStreak: number;
     weeklyLog: Record<string, boolean>;
@@ -54,12 +55,74 @@ export default function DashboardPage() {
         }
       } catch (err) {
         console.error('Failed to fetch profile in dashboard page:', err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchProfile();
   }, []);
 
   const improvementPercent = Math.min(100, Math.max(0, stats.improvement * 4));
+
+  if (loading) {
+    return (
+      <div className="space-y-8 max-w-7xl mx-auto font-sans animate-in fade-in duration-200">
+        {/* Top Section Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-[#F5F4FE] border border-[#E4E0FF] rounded-3xl p-6 sm:p-8 flex items-center justify-between min-h-[160px] animate-pulse">
+            <div className="flex items-center space-x-6">
+              <div className="h-24 w-24 rounded-2xl bg-[#E8E5FF]" />
+              <div className="space-y-3">
+                <div className="h-7 w-48 bg-[#E2DFFA] rounded-xl" />
+                <div className="h-4 w-72 bg-[#E2DFFA]/60 rounded-lg" />
+                <div className="h-4 w-56 bg-[#E2DFFA]/60 rounded-lg" />
+              </div>
+            </div>
+            <div className="hidden sm:block h-12 w-44 rounded-2xl bg-[#6C5CE7]/20" />
+          </div>
+          <div className="bg-[#F5F4FE] border border-[#E4E0FF] rounded-3xl p-6 flex flex-col justify-between min-h-[160px] animate-pulse">
+            <div className="h-5 w-32 bg-[#E2DFFA] rounded-lg" />
+            <div className="flex justify-between items-center px-1">
+              {[...Array(7)].map((_, i) => (
+                <div key={i} className="h-8 w-8 rounded-full bg-[#E2DFFA]" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Metrics Row Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-[#F5F4FE] border border-[#E4E0FF] rounded-3xl p-6 min-h-[180px] flex items-center justify-around animate-pulse">
+            <div className="h-28 w-28 rounded-full bg-[#E2DFFA]" />
+            <div className="h-28 w-28 rounded-full bg-[#E2DFFA]" />
+            <div className="h-28 w-28 rounded-full bg-[#E2DFFA]" />
+          </div>
+          <div className="bg-[#F5F4FE] border border-[#E4E0FF] rounded-3xl p-6 min-h-[180px] space-y-3 animate-pulse">
+            <div className="h-5 w-36 bg-[#E2DFFA] rounded-lg" />
+            <div className="h-9 w-full bg-[#E2DFFA]/70 rounded-xl" />
+            <div className="h-9 w-full bg-[#E2DFFA]/70 rounded-xl" />
+          </div>
+        </div>
+
+        {/* Quick Actions Skeleton */}
+        <div className="space-y-4">
+          <div className="h-6 w-32 bg-[#E2DFFA] rounded-lg animate-pulse" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-[#FAF9FF] border border-[#E4E0FF] rounded-3xl p-5 h-44 flex flex-col justify-between animate-pulse">
+                <div className="h-10 w-10 rounded-xl bg-[#E8E5FF]" />
+                <div className="space-y-2">
+                  <div className="h-4 w-28 bg-[#E2DFFA] rounded-lg" />
+                  <div className="h-3 w-36 bg-[#E2DFFA]/60 rounded-lg" />
+                </div>
+                <div className="h-9 w-full bg-[#6C5CE7]/20 rounded-xl" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto font-sans">
@@ -173,7 +236,7 @@ export default function DashboardPage() {
           {/* Quick Actions Row */}
           <div className="space-y-4">
             <h2 className="text-base font-extrabold text-[#1E1B4B]">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1: Mock Interviews */}
               <div className="bg-white border border-[#E4E0FF] hover:border-[#6C5CE7] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
@@ -258,27 +321,6 @@ export default function DashboardPage() {
                   className="w-full py-2.5 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5849E0] text-white font-bold text-xs text-center shadow-sm transition-colors block"
                 >
                   Analyze Job Description
-                </Link>
-              </div>
-
-              {/* Card 5: Company Analysis */}
-              <div className="bg-white border border-[#E4E0FF] hover:border-[#6C5CE7] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
-                <div className="space-y-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#3C388B] flex items-center justify-center text-white shadow-sm">
-                    <Briefcase className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-extrabold text-[#1E1B4B] mb-1">Company Analysis</h3>
-                    <p className="text-[11px] text-[#64748B] leading-relaxed">
-                      Find insights on culture, interviews & role expectations.
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  href="/cv-center/jd-matcher"
-                  className="w-full py-2.5 px-4 rounded-xl bg-[#6C5CE7] hover:bg-[#5849E0] text-white font-bold text-xs text-center shadow-sm transition-colors block"
-                >
-                  Analyze Company
                 </Link>
               </div>
             </div>
