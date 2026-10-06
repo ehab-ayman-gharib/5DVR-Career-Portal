@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import { parsePdfBuffer } from '@/lib/pdf-parser';
 
 export async function GET(request: NextRequest) {
   try {
@@ -64,12 +63,8 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    let parsedText = '';
-    try {
-      parsedText = await parsePdfBuffer(buffer);
-    } catch {
-      parsedText = `Resume file: ${file.name}`;
-    }
+    // parsedText is no longer extracted locally — PDF is analyzed directly by OpenAI in the ATS/parse-cv routes
+    const parsedText = `Resume file: ${file.name}`;
 
     // Simple keyword extraction for skills preview
     const skillKeywords = ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'SQL', 'PostgreSQL', 'Docker', 'AWS', 'Git', 'Agile'];

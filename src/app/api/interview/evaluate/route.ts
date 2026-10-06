@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import { openai, getTargetModel } from '@/lib/openai';
+import { openai, TARGET_MODEL } from '@/lib/openai';
 
 export async function POST(req: Request) {
   try {
@@ -77,20 +77,20 @@ Return a JSON object with:
   ]
 }`;
 
-      const response = await openai.chat.completions.create({
-        model: getTargetModel(),
-        messages: [
+      const aiResponse = await openai.responses.create({
+        model: TARGET_MODEL,
+        reasoning: { effort: 'low' },
+        input: [
           {
-            role: 'system',
-            content: 'You generate mock interview feedback evaluations based on avatar session results and return JSON only.',
+            role: 'user',
+            content: [
+              { type: 'input_text', text: 'You generate mock interview feedback evaluations based on avatar session results and return JSON only.\n\n' + prompt },
+            ],
           },
-          { role: 'user', content: prompt },
         ],
-        temperature: 0.3,
-        response_format: { type: 'json_object' },
-      });
+      } as any);
 
-      const content = response.choices[0]?.message?.content;
+      const content: string | undefined = (aiResponse as any).output_text;
       if (content) {
         const parsed = JSON.parse(content);
         if (typeof parsed.overallScore === 'number') overallScore = parsed.overallScore;

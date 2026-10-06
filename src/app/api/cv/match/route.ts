@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-import { openai, getTargetModel } from '@/lib/openai';
+import { openai, TARGET_MODEL } from '@/lib/openai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -96,13 +96,18 @@ Respond ONLY with a valid JSON object matching this schema:
   }
 }`;
 
-    const completion = await openai.chat.completions.create({
-      model: getTargetModel(),
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.2,
-    });
+    const response = await openai.responses.create({
+      model: TARGET_MODEL,
+      reasoning: { effort: 'low' },
+      input: [
+        {
+          role: 'user',
+          content: [{ type: 'input_text', text: prompt }],
+        },
+      ],
+    } as any);
 
-    const content = completion.choices[0]?.message?.content || '{}';
+    const content: string = (response as any).output_text || '{}';
     let parsedMatch: any = {};
 
     try {

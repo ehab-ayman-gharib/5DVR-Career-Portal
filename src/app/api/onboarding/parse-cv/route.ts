@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { parsePdfBuffer } from '@/lib/pdf-parser';
-import { openai, getTargetModel } from '@/lib/openai';
+import { openai, TARGET_MODEL } from '@/lib/openai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,44 +20,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const isValidType =
+      file.type === 'application/pdf' ||
+      file.name.toLowerCase().endsWith('.pdf');
+
+    if (!isValidType) {
+      return NextResponse.json(
+        { error: 'Invalid file type. Only PDF files are accepted.' },
+        { status: 400 }
+      );
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const parsedText = await parsePdfBuffer(buffer);
 
-    // Robust helper function to extract degree & university lines
-    const extractEducationFallback = (text: string): string => {
-      // 1. Try extracting text under an explicit EDUCATION section header
-      const sectionMatch = text.match(/(?:^|\n)\s*(?:EDUCATION|ACADEMIC BACKGROUND|QUALIFICATIONS)\s*(?:\n|$)([\s\S]*?)(?=\n\s*(?:EXPERIENCE|SKILLS|PROJECTS|WORK|SUMMARY)\b|\n\s*\n[A-Z\s]{4,}|$)/i);
-      
-      const targetText = sectionMatch ? sectionMatch[1] : text;
-      const lines = targetText.split('\n').map(l => l.trim()).filter(Boolean);
-      
-      // Keywords that identify actual degrees/universities vs. prose descriptions
-      const degreeKeywords = /bachelor|master|phd|b\.sc|m\.sc|degree|university|faculty|college|diploma|computer\s+science/i;
-      const proseIgnoreKeywords = /educational\s+tool|educational\s+content|educational\s+platform|educational\s+game|users\s+engage/i;
+    // Upload PDF to OpenAI Files API
+    let fileId: string;
+    try {
+      const uploadedFile = await openai.files.create({
+        file: new File([buffer], file.name, { type: 'application/pdf' }),
+        purpose: 'user_data',
+      });
+      fileId = uploadedFile.id;
+    } catch (uploadError) {
+      console.error('Error uploading PDF to OpenAI:', uploadError);
+      return NextResponse.json(
+        { error: 'Failed to parse CV and extract profile.' },
+        { status: 500 }
+      );
+    }
 
-      const validEducationLines: string[] = [];
-      for (const line of lines) {
-        if (degreeKeywords.test(line) && !proseIgnoreKeywords.test(line)) {
-          validEducationLines.push(line);
-        }
-      }
-
-      if (validEducationLines.length > 0) {
-        return validEducationLines.slice(0, 3).join(' - ');
-      }
-      return '';
-    };
-
-    // Prompt LLM for structured profile JSON
-    const prompt = `You are a precise resume parser. Extract profile information from the resume text into strict JSON format.
+    // Prompt LLM for structured profile JSON — kept identical to existing behavior
+    const prompt = `You are a precise resume parser. Extract profile information from the resume into strict JSON format.
 
 CRITICAL RULE FOR "education":
 Extract ONLY the candidate's actual academic degree, major, faculty, and university (e.g., "BACHELOR'S DEGREE, COMPUTER SCIENCE, Faculty of computers & Information Helwan University 2009 - 2013").
 Do NOT extract work experience descriptions, project summaries, or sentences mentioning "educational tool", "educational platform", or similar job duties as the candidate's education.
-
-Resume Text:
-${parsedText.substring(0, 4000)}
 
 Respond ONLY with a JSON object in this exact structure:
 {
@@ -71,24 +68,47 @@ Respond ONLY with a JSON object in this exact structure:
   "extractedSkills": ["Skill 1", "Skill 2"]
 }`;
 
-    const completion = await openai.chat.completions.create({
-      model: getTargetModel(),
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.1,
-    });
-
-    const content = completion.choices[0]?.message?.content || '{}';
     let rawParsed: Record<string, any> = {};
 
     try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        rawParsed = JSON.parse(jsonMatch[0]);
-      } else {
-        rawParsed = JSON.parse(content);
+      // Call OpenAI Responses API with the uploaded file
+      const response = await openai.responses.create({
+        model: TARGET_MODEL,
+        reasoning: { effort: 'low' },
+        input: [
+          {
+            role: 'user',
+            content: [
+              { type: 'input_file', file_id: fileId },
+              { type: 'input_text', text: prompt },
+            ],
+          },
+        ],
+      } as any);
+
+      const content: string = (response as any).output_text || '{}';
+
+      try {
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          rawParsed = JSON.parse(jsonMatch[0]);
+        } else {
+          rawParsed = JSON.parse(content);
+        }
+      } catch (e) {
+        console.warn('Failed to parse LLM JSON output, using empty fallback:', e);
       }
-    } catch (e) {
-      console.warn('Failed to parse LLM JSON output, using raw text fallback:', e);
+    } catch (apiError) {
+      console.error('OpenAI Responses API error in parse-cv:', apiError);
+      return NextResponse.json(
+        { error: 'Failed to parse CV and extract profile.' },
+        { status: 500 }
+      );
+    } finally {
+      // Fire-and-forget cleanup — delete the uploaded file from OpenAI
+      openai.files.del(fileId).catch((e) =>
+        console.warn('Could not delete OpenAI file after parse-cv:', e)
+      );
     }
 
     // Normalize keys (case-insensitive lookup)
@@ -103,17 +123,10 @@ Respond ONLY with a JSON object in this exact structure:
       return null;
     };
 
-    let extractedEducation = getVal(['education', 'degree', 'qualification', 'university']);
-
-    // Ignore if LLM erroneously grabbed a work experience sentence like "educational tool..."
-    if (!extractedEducation || /educational\s+(tool|content|platform|game|users)/i.test(String(extractedEducation))) {
-      extractedEducation = extractEducationFallback(parsedText);
-    }
-
     const parsedProfile = {
       firstName: getVal(['firstName', 'first_name', 'name']) || '',
       lastName: getVal(['lastName', 'last_name']) || '',
-      education: extractedEducation || '',
+      education: getVal(['education', 'degree', 'qualification', 'university']) || '',
       fieldOfInterest: getVal(['fieldOfInterest', 'field_of_interest', 'domain', 'specialization']) || 'Technology',
       experienceLevel: getVal(['experienceLevel', 'experience_level']) || 'MID_LEVEL',
       careerGoal: getVal(['careerGoal', 'career_goal', 'target_role', 'title']) || 'Software Professional',
@@ -124,7 +137,7 @@ Respond ONLY with a JSON object in this exact structure:
 
     return NextResponse.json({
       parsedProfile,
-      parsedTextSnippet: parsedText.substring(0, 300),
+      parsedTextSnippet: '',
     });
   } catch (error) {
     console.error('Error in /api/onboarding/parse-cv:', error);
