@@ -75,17 +75,24 @@ During job-seeker onboarding, a user uploads their PDF resume so the system can 
 - **FR-004**: The system MUST remove the `pdf-parse` library dependency and all associated local PDF-to-text conversion logic.
 - **FR-005**: The system MUST validate uploaded files for presence, type (PDF only), and size (≤ 5MB) before any API call is made.
 - **FR-006**: The system MUST keep the OpenAI API key exclusively server-side, using the existing environment variable (`OPENAI_API_KEY`). It MUST NOT be exposed to the client.
-- **FR-007**: The ATS analysis route MUST return responses in the exact same JSON structure currently consumed by the frontend: `{ reportId, resumeId, fileName, score, metrics, missingKeywords, actionableFixes }`.
+- **FR-007**: The ATS analysis route MUST return a comprehensive evidence-based ATS compatibility report. To preserve frontend backwards-compatibility while enabling rich UX enhancements, the response MUST include:
+  - `score` (0–100, calculated as the exact sum of category breakdown scores)
+  - `detectedRole` (string identifying the candidate's apparent primary profession/specialization)
+  - `scoreBreakdown` (`parseability` [0–25], `experienceContent` [0–25], `skillsKeywords` [0–25], `structureCompleteness` [0–15], `recruiterReadability` [0–10])
+  - `keywordOpportunities` & `missingKeywords` (conservative array of relevant keywords supported by existing experience, avoiding unsupported domain hallucinations)
+  - `strengths` (array of 2–5 evidence-based resume strengths)
+  - `metrics` (`missingKeywordsCount`, `formattingIssuesCount`, `redFlagsCount`)
+  - `actionableFixes` (array of max 8 prioritized fixes, each containing `type`: `RED_FLAG` | `FORMATTING` | `KEYWORD`, `severity`: `HIGH` | `MEDIUM` | `LOW`, `issue`: string, `evidence`: string quoting or citing resume content, `recommendation`: string with concrete guidance)
 - **FR-008**: The CV parse route MUST return responses in the exact same JSON structure: `{ parsedProfile, parsedTextSnippet }`.
 - **FR-009**: The system MUST handle OpenAI API errors gracefully and return error responses in the format already expected by the frontend.
 - **FR-010**: The ATS analysis route MUST continue to support both multipart/form-data (file upload) and application/json (existing resume ID) request modes.
 - **FR-011**: The ATS report MUST continue to be persisted to the database after successful analysis.
-- **FR-012**: The existing CV upload modal, frontend flow, validation messages, loading states, and error handling MUST remain unchanged unless a backend structural change requires a frontend adjustment.
+- **FR-012**: The frontend ATS page and recommendations components MUST render evidence quotes, severity priority badges, detected role, strengths, and category breakdown scores.
 
 ### Key Entities
 
-- **Resume**: Represents an uploaded CV file. Attributes: `fileName`, `fileUrl`, `fileSizeBytes`, `parsedText`, `parsedData`. Now stores AI-extracted text summary instead of locally extracted text.
-- **ATSReport**: The structured analysis report linked to a Resume. Attributes: `score`, `missingKeywords`, `formattingIssues`, `redFlags`, `actionableFixes`. Unchanged.
+- **Resume**: Represents an uploaded CV file. Attributes: `fileName`, `fileUrl`, `fileSizeBytes`, `parsedText`, `parsedData`. Stores extracted resume context without artificial 4,000-character truncation limits.
+- **ATSReport**: The structured analysis report linked to a Resume. Attributes: `score` (Int), `missingKeywords` (Json — stores keyword opportunities), `formattingIssues` (Json), `redFlags` (Json), `actionableFixes` (Json — stores prioritized fixes with verbatim evidence and severity). Seamlessly accommodates rich payload via Postgres JSON fields without requiring schema modifications.
 
 ---
 

@@ -56,10 +56,10 @@ Job Description Context:
 Position Title: ${positionTitle || 'Target Role'}
 Company: ${companyName || 'Target Company'}
 Job Description Text:
-${jobDescriptionText.substring(0, 3000)}
+${jobDescriptionText}
 
 Candidate Resume Text (File: ${activeResume.fileName}):
-${candidateResumeText.substring(0, 3000)}
+${candidateResumeText}
 
 JSON Evaluation Rules:
 1. "overallMatchScore": Int (0 to 100) match score based on candidate experience matching the job posting.

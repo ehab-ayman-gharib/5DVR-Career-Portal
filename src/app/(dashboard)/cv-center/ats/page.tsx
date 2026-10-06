@@ -11,12 +11,22 @@ interface ATSReportResult {
   reportId: string;
   fileName: string;
   score: number;
+  detectedRole?: string;
+  scoreBreakdown?: {
+    parseability: number;
+    experienceContent: number;
+    skillsKeywords: number;
+    structureCompleteness: number;
+    recruiterReadability: number;
+  };
+  strengths?: string[];
   metrics: {
     missingKeywordsCount: number;
     formattingIssuesCount: number;
     redFlagsCount: number;
   };
   missingKeywords: string[];
+  keywordOpportunities?: string[];
   actionableFixes: ActionableFix[];
 }
 
@@ -193,6 +203,28 @@ export default function ATSAnalyzerPage() {
       ) : (
         /* ATS Analysis Result Report View */
         <div className="space-y-8">
+          {/* Detected Role Banner */}
+          {report.detectedRole && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#6C5CE7]/10 via-[#F5F4FE] to-white border border-[#E4E0FF] flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="h-9 w-9 rounded-xl bg-[#6C5CE7] text-white flex items-center justify-center font-bold text-sm">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#6C5CE7]">
+                    Identified Specialization
+                  </span>
+                  <h3 className="text-base font-extrabold text-[#1E1B4B]">
+                    {report.detectedRole}
+                  </h3>
+                </div>
+              </div>
+              <span className="text-xs text-[#52528C] font-semibold hidden sm:inline-block">
+                Evaluated against this primary specialization
+              </span>
+            </div>
+          )}
+
           {/* Top Score & Metric Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Score Radial Indicator Card */}
@@ -227,17 +259,17 @@ export default function ATSAnalyzerPage() {
               </span>
             </div>
 
-            {/* Metric Counter 1: Missing Keywords */}
+            {/* Metric Counter 1: Keyword Opportunities */}
             <div className="bg-white border border-[#E4E0FF] rounded-3xl p-6 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-[#8E9BBA] uppercase tracking-wider">Missing Keywords</span>
+                <span className="text-xs font-extrabold text-[#8E9BBA] uppercase tracking-wider">Keyword Opportunities</span>
                 <div className="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <Tag className="h-4 w-4" />
                 </div>
               </div>
               <div className="mt-4">
                 <p className="text-3xl font-black text-[#1E1B4B]">{report.metrics.missingKeywordsCount}</p>
-                <p className="text-xs text-[#52528C] mt-1 font-medium">Critical terms omitted</p>
+                <p className="text-xs text-[#52528C] mt-1 font-medium">Relevant terms to highlight</p>
               </div>
             </div>
 
@@ -270,11 +302,75 @@ export default function ATSAnalyzerPage() {
             </div>
           </div>
 
-          {/* Missing Keywords Box */}
+          {/* Score Category Breakdown */}
+          {report.scoreBreakdown && (
+            <div className="bg-white border border-[#E4E0FF] rounded-3xl p-6 shadow-sm space-y-4">
+              <h4 className="text-sm font-extrabold text-[#1E1B4B] uppercase tracking-wider">
+                Category Score Breakdown
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                <div className="p-4 rounded-2xl bg-[#F8F9FE] border border-[#E4E0FF] space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#52528C] uppercase">Parseability</span>
+                  <div className="flex items-baseline space-x-1">
+                    <span className="text-xl font-black text-[#1E1B4B]">{report.scoreBreakdown.parseability}</span>
+                    <span className="text-[10px] font-bold text-[#8E9BBA]">/ 25</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#F8F9FE] border border-[#E4E0FF] space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#52528C] uppercase">Experience Quality</span>
+                  <div className="flex items-baseline space-x-1">
+                    <span className="text-xl font-black text-[#1E1B4B]">{report.scoreBreakdown.experienceContent}</span>
+                    <span className="text-[10px] font-bold text-[#8E9BBA]">/ 25</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#F8F9FE] border border-[#E4E0FF] space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#52528C] uppercase">Skills & Keywords</span>
+                  <div className="flex items-baseline space-x-1">
+                    <span className="text-xl font-black text-[#1E1B4B]">{report.scoreBreakdown.skillsKeywords}</span>
+                    <span className="text-[10px] font-bold text-[#8E9BBA]">/ 25</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#F8F9FE] border border-[#E4E0FF] space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#52528C] uppercase">Structure</span>
+                  <div className="flex items-baseline space-x-1">
+                    <span className="text-xl font-black text-[#1E1B4B]">{report.scoreBreakdown.structureCompleteness}</span>
+                    <span className="text-[10px] font-bold text-[#8E9BBA]">/ 15</span>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#F8F9FE] border border-[#E4E0FF] space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#52528C] uppercase">Readability</span>
+                  <div className="flex items-baseline space-x-1">
+                    <span className="text-xl font-black text-[#1E1B4B]">{report.scoreBreakdown.recruiterReadability}</span>
+                    <span className="text-[10px] font-bold text-[#8E9BBA]">/ 10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Strengths Section */}
+          {report.strengths && report.strengths.length > 0 && (
+            <div className="bg-white border border-[#E4E0FF] rounded-3xl p-6 shadow-sm space-y-3">
+              <h4 className="text-sm font-extrabold text-[#1E1B4B] uppercase tracking-wider flex items-center space-x-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                <span>Detected Resume Strengths</span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                {report.strengths.map((str, idx) => (
+                  <div key={idx} className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/60 flex items-start space-x-2.5">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-xs font-bold text-emerald-900">{str}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Keyword Opportunities Box */}
           {report.missingKeywords && report.missingKeywords.length > 0 && (
             <div className="bg-white border border-[#E4E0FF] rounded-3xl p-6 shadow-sm space-y-3">
               <h4 className="text-sm font-extrabold text-[#1E1B4B] uppercase tracking-wider">
-                Recommended Industry Keywords to Add
+                Keyword Opportunities (Supported by your experience)
               </h4>
               <div className="flex flex-wrap gap-2">
                 {report.missingKeywords.map((kw, idx) => (

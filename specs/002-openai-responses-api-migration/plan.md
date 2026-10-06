@@ -71,20 +71,35 @@ specs/002-openai-responses-api-migration/
 ```text
 src/
 ├── lib/
-│   ├── openai.ts          ← REFACTOR: remove Qwen/custom URL, simplify to official OpenAI + export TARGET_MODEL
-│   └── pdf-parser.ts      ← DELETE: no longer needed
+│   ├── openai.ts              ← REFACTOR: official OpenAI SDK + TARGET_MODEL ('gpt-6.1-sol') with build safety
+│   └── pdf-parser.ts          ← DELETE: removed along with pdf-parse dependency
+│
+├── components/
+│   └── cv/
+│       └── FixRecommendations.tsx ← ENHANCE: render priority severity badges, evidence citations, and Keyword Opportunity labels
 │
 └── app/
+    ├── (dashboard)/
+    │   └── cv-center/
+    │       └── ats/
+    │           └── page.tsx   ← ENHANCE: render detectedRole, scoreBreakdown, strengths, and keyword opportunities
     └── api/
         ├── cv/
-        │   └── ats/
-        │       └── route.ts   ← REFACTOR: replace pdf-parse + chat completions with Responses API file upload
+        │   ├── ats/
+        │   │   └── route.ts   ← REFACTOR: Files API + Responses API + evidence-based prompt + removed 4k text cutoffs
+        │   ├── match/
+        │   │   └── route.ts   ← REFACTOR: Responses API + removed 3k text cutoff
+        │   └── resume/
+        │       └── route.ts   ← REFACTOR: removed pdf-parser dependency
+        ├── interview/
+        │   └── evaluate/
+        │       └── route.ts   ← REFACTOR: updated to Responses API
         └── onboarding/
             └── parse-cv/
-                └── route.ts   ← REFACTOR: replace pdf-parse + chat completions with Responses API file upload
+                └── route.ts   ← REFACTOR: Files API + Responses API direct parsing
 ```
 
-**Structure Decision**: Single Next.js App Router project. Only 3 files modified, 1 deleted, 0 new files created. The frontend, database schema, and all other routes are untouched.
+**Structure Decision**: Single Next.js App Router project. Reusable UI components updated to support evidence-based review. Zero database schema migrations required.
 
 ## Architecture Decisions (from research.md)
 
@@ -93,12 +108,14 @@ src/
 | PDF delivery to OpenAI | Files API upload → `input_file` reference | Native Responses API file support; avoids large base64 payloads |
 | Model | `gpt-6.1-sol` | Per spec requirement |
 | Reasoning effort | `low` | Speed and cost optimization for structured extraction tasks |
+| Prompting Strategy | Evidence-based, zero job-assumption | Identifies primary specialization first; suggests keyword opportunities only with existing resume evidence; 5-category 100pt breakdown |
+| Truncation Elimination | Removed arbitrary 3k/4k limits | OpenAI 128k context eliminates need for slicing text mid-word/sentence |
 | `parsedTextSnippet` | Return `""` | No local extraction; field is debug-only, not rendered in main UI |
-| `parsedText` DB field | Store `""` for new uploads | Avoids extra extraction step; JSON re-analysis path is degraded fallback |
-| lib/openai.ts cleanup | Remove `LLM_BASE_URL`, `LLM_MODEL_ID`, `getTargetModel()`, Qwen fallback | Single-responsibility, no dead code |
+| `parsedText` DB field | Store `""` for new uploads | Avoids extra extraction step; full context preserved when available |
+| lib/openai.ts cleanup | Remove `LLM_BASE_URL`, `LLM_MODEL_ID`, `getTargetModel()`, Qwen fallback | Clean official client with build-time fallback |
 | Error format | Preserve existing `{ error: string }` with status 500 | Frontend error handling unchanged |
 
-## API Contracts (unchanged)
+## API Contracts
 
 ### POST /api/cv/ats
 
@@ -117,15 +134,34 @@ file: <PDF binary, ≤5MB>
   "reportId": "<string>",
   "resumeId": "<string|null>",
   "fileName": "<string>",
-  "score": 78,
-  "metrics": {
-    "missingKeywordsCount": 4,
-    "formattingIssuesCount": 2,
-    "redFlagsCount": 1
+  "score": 82,
+  "detectedRole": "Game Developer / VR Engineer",
+  "scoreBreakdown": {
+    "parseability": 22,
+    "experienceContent": 21,
+    "skillsKeywords": 20,
+    "structureCompleteness": 11,
+    "recruiterReadability": 8
   },
-  "missingKeywords": ["Docker", "CI/CD"],
+  "strengths": [
+    "Clear chronological career progression",
+    "Strong technical achievements in real-time VR simulations"
+  ],
+  "metrics": {
+    "missingKeywordsCount": 2,
+    "formattingIssuesCount": 1,
+    "redFlagsCount": 0
+  },
+  "keywordOpportunities": ["REST API", "State Synchronization"],
+  "missingKeywords": ["REST API", "State Synchronization"],
   "actionableFixes": [
-    { "type": "RED_FLAG|FORMATTING|KEYWORD", "issue": "...", "recommendation": "..." }
+    {
+      "type": "KEYWORD",
+      "severity": "LOW",
+      "issue": "REST API terminology not explicitly highlighted",
+      "evidence": "Candidate describes building HTTP backend integrations in multiplayer module",
+      "recommendation": "If accurate, explicitly state 'REST API' to improve search discovery."
+    }
   ]
 }
 ```

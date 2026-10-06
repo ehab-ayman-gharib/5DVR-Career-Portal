@@ -67,6 +67,18 @@
 
 ---
 
+## Phase 5: Evidence-Based ATS Evaluation & Truncation Elimination (Enhancement)
+
+**Purpose**: Upgrade ATS prompt to evidence-based evaluation without job assumptions, remove artificial 3k/4k char cutoffs, and render evidence/severity in UI.
+
+- [x] T020 Remove legacy `.substring(0, 4000)` and `.substring(0, 3000)` character cutoffs in `src/app/api/cv/ats/route.ts` and `src/app/api/cv/match/route.ts` to allow full document context.
+- [x] T021 Upgrade ATS system prompt in `src/app/api/cv/ats/route.ts` to 5-category evidence-based scoring (Parseability 25, Content 25, Keywords 25, Structure 15, Readability 10), requiring detected specialization, keyword opportunities supported by resume evidence, strengths, and verbatim evidence citations.
+- [x] T022 Update `FixRecommendations.tsx` to display priority severity badges (`HIGH`, `MEDIUM`, `LOW`) and verbatim resume evidence citations.
+- [x] T023 Update `cv-center/ats/page.tsx` to render detected specialization banner, 5-category score breakdown, detected strengths, and keyword opportunities.
+- [x] T024 Validate TypeScript compilation with `npx tsc --noEmit` and confirm zero regressions.
+
+---
+
 ## Dependencies
 
 ```

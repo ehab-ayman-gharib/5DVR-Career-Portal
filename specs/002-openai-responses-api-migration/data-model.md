@@ -32,16 +32,17 @@ Represents the AI-generated ATS analysis result for a Resume.
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `id` | `String` (cuid) | Primary key |
+| `id` | `String` (uuid) | Primary key |
 | `resumeId` | `String` | Foreign key to Resume (unique — one report per resume) |
-| `score` | `Int` | ATS score 0–100 |
-| `missingKeywords` | `String[]` | List of missing keywords |
-| `formattingIssues` | `Json[]` | Formatting issue counts |
-| `redFlags` | `Json[]` | Red flag counts |
-| `actionableFixes` | `Json` | Array of fix objects |
+| `score` | `Int` | ATS score 0–100 (exact sum of category breakdown) |
+| `missingKeywords` | `Json` | Array of relevant keyword opportunities (`keywordOpportunities`) |
+| `formattingIssues` | `Json` | Formatting issue counters |
+| `redFlags` | `Json` | Red flag counters |
+| `actionableFixes` | `Json` | Array of structured fix objects containing `type`, `severity` (`HIGH` \| `MEDIUM` \| `LOW`), `issue`, `evidence` (verbatim quote/citation from resume), and `recommendation` |
 | `createdAt` | `DateTime` | Report timestamp |
 
-**No changes** to this entity.
+**Zero Database Schema Migration Required**:
+Because PostgreSQL and Prisma define `missingKeywords` and `actionableFixes` as native `Json` columns, the new fields (`evidence`, `severity`, `keywordOpportunities`) are seamlessly stored in the existing schema without requiring any database migrations (`ALTER TABLE`), migration SQL, or downtime. Existing database records remain 100% compatible.
 
 ---
 
